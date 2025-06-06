@@ -1,0 +1,15 @@
+mission_name: example
+color_chart:
+  coord:
+    latitude: 36.334128334
+    longitude: 112.836319678
+    altitude: 4
+plot:
+  file_path: exp_plot_boundary/example.csv
+  def_type: single_rc
+suvery_cfg:
+  suvery_height: 4
+  gimbal_angle_relative_to_line: -90
+  sample_size:
+    r: 2
+    c: 1
