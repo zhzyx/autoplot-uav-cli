@@ -112,8 +112,8 @@ class TakePhotoLineTask(BaseTask):
                                                gimbal_pitch_rotate_angle=self._gimbal_pitch_angle)
             first_placemark_actions.append(rotate_action)
         # for start of the line, hover for 1 seconds before taking photo
-        hover_action = HoverAction(action_id=0, hover_time=1)
-        first_placemark_actions.append(hover_action)
+        # hover_action = HoverAction(action_id=0, hover_time=1)
+        # first_placemark_actions.append(hover_action)
         take_photo_action = TakePhotoAction(action_id=0,
                                             file_suffix=self._file_suffix[0])
         first_placemark_actions.append(take_photo_action)
@@ -171,11 +171,10 @@ class TakePhotoLineTask(BaseTask):
             self._placemarks.append(placemark)
         # Create the last placemark
         final_id = self._start_index + len(self._locations)-1
-        final_hover_action = HoverAction(action_id=0, hover_time=1)
+        # final_hover_action = HoverAction(action_id=0, hover_time=1)
         final_take_photo_action = TakePhotoAction(action_id=0, 
                                                   file_suffix=self._file_suffix[-1])
-        final_action_group = ActionGroup(group_id=final_id, actions=[final_hover_action,
-                                                                     final_take_photo_action])
+        final_action_group = ActionGroup(group_id=final_id, actions=[final_take_photo_action])
         placemark = Placemark(
             coordinates=self._locations[-1],
             index=final_id, 
