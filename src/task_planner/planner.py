@@ -6,7 +6,9 @@ from ..kml.kml import KML
 import numpy as np
 
 class GridPlotPlanner:
-    def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0):
+    def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, 
+                 non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0,
+                 mission_cfg=None):
         """
         Initialize the Planner with a PlotSurveyor instance and output file.
 
@@ -23,6 +25,7 @@ class GridPlotPlanner:
         self.tasks = []
         self.pre_tasks = []
         self.post_tasks = []
+        self.mission_cfg = mission_cfg
 
     def add_pre_task(self, task):
         """
@@ -115,7 +118,7 @@ class GridPlotPlanner:
         Returns:
             KML: The KML object containing the tasks.
         """
-        kml = KML()
+        kml = KML(mission_config=self.mission_cfg)
         placemarks = []
         for task in self.pre_tasks:
             # Create a new placemark for each task
