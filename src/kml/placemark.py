@@ -180,7 +180,7 @@ class Placemark:
         }
 
     def to_xml(self):
-        return xmltodict.unparse({"Placemaerk": self.to_dict()}, pretty=True)
+        return xmltodict.unparse({"Placemark": self.to_dict()}, pretty=True)
 
     @classmethod
     def from_xml(cls, xml_data):
