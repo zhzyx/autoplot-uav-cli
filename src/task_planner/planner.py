@@ -141,7 +141,7 @@ class GridPlotPlanner:
             list of KML objects: The KML objects containing the tasks.
         """
         kml_list = []
-        kml = KML()
+        kml = KML(mission_config=self.mission_cfg)
         placemarks = []
         placemarks_index = 0
         for task in self.pre_tasks:
