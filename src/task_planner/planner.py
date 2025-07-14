@@ -158,7 +158,7 @@ class GridPlotPlanner:
             if (i + 1) % num_tasks == 0:
                 kml.placemarks = placemarks
                 kml_list.append(kml)
-                kml = KML()
+                kml = KML(mission_config=self.mission_cfg)
                 placemarks_index = 0
                 placemarks = []
         for task in self.post_tasks:
