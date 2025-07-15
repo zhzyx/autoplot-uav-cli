@@ -6,7 +6,9 @@ from ..kml.kml import KML
 import numpy as np
 
 class GridPlotPlanner:
-    def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0):
+    def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, 
+                 non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0,
+                 mission_cfg=None):
         """
         Initialize the Planner with a PlotSurveyor instance and output file.
 
@@ -23,6 +25,7 @@ class GridPlotPlanner:
         self.tasks = []
         self.pre_tasks = []
         self.post_tasks = []
+        self.mission_cfg = mission_cfg
 
     def add_pre_task(self, task):
         """
@@ -115,7 +118,7 @@ class GridPlotPlanner:
         Returns:
             KML: The KML object containing the tasks.
         """
-        kml = KML()
+        kml = KML(mission_config=self.mission_cfg)
         placemarks = []
         for task in self.pre_tasks:
             # Create a new placemark for each task
@@ -138,7 +141,7 @@ class GridPlotPlanner:
             list of KML objects: The KML objects containing the tasks.
         """
         kml_list = []
-        kml = KML()
+        kml = KML(mission_config=self.mission_cfg)
         placemarks = []
         placemarks_index = 0
         for task in self.pre_tasks:
@@ -155,7 +158,7 @@ class GridPlotPlanner:
             if (i + 1) % num_tasks == 0:
                 kml.placemarks = placemarks
                 kml_list.append(kml)
-                kml = KML()
+                kml = KML(mission_config=self.mission_cfg)
                 placemarks_index = 0
                 placemarks = []
         for task in self.post_tasks:
@@ -176,7 +179,9 @@ class GridPlotPlanner:
             kml_list = self.create_split_kml(num_tasks)
             for i, kml in enumerate(kml_list):
                 # Write to file
-                folder_name = os.path.dirname(file_path)
+                folder_name = os.path.join(os.path.dirname(file_path), os.path.basename(file_path).split('.')[0])
+                if not os.path.exists(folder_name):
+                    os.makedirs(folder_name, exist_ok=True)
                 file_name = os.path.basename(file_path)
                 with open(os.path.join(folder_name, f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kml"), "w") as f:
                     f.write(kml.to_xml())
@@ -191,9 +196,11 @@ class GridPlotPlanner:
             kml_list = self.create_split_kml(num_tasks)
             for i, kml in enumerate(kml_list):
                 # Write to file
-                folder_name = os.path.dirname(file_path)
+                folder_name = os.path.join(os.path.dirname(file_path), os.path.basename(file_path).split('.')[0])
+                if not os.path.exists(folder_name): 
+                    os.makedirs(folder_name, exist_ok=True)
                 file_name = os.path.basename(file_path)
-                kml.to_kmz(os.path.join(folder_name, f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kmz"))
+                kml.to_kmz(os.path.join(folder_name,  f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kmz"))
         else:
             kml = self.create_kml()
             # Write to file

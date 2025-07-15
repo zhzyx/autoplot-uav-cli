@@ -59,13 +59,13 @@ class GimbalRotateAction(Action):
             "wpml:gimbalHeadingYawBase": gimbal_heading_yaw_base,
             "wpml:gimbalRotateMode": gimbal_rotate_mode,
             "wpml:gimbalPitchRotateEnable": 1 if gimbal_pitch_rotate_enable else 0,
-            "wpml:gimbalPitchRotateAngle": gimbal_pitch_rotate_angle,
+            "wpml:gimbalPitchRotateAngle": gimbal_pitch_rotate_angle if gimbal_pitch_rotate_enable else None,
             "wpml:gimbalRollRotateEnable": 1 if gimbal_roll_rotate_enable else 0,
-            "wpml:gimbalRollRotateAngle": gimbal_roll_rotate_angle,
+            "wpml:gimbalRollRotateAngle": gimbal_roll_rotate_angle if gimbal_roll_rotate_enable else None,
             "wpml:gimbalYawRotateEnable": 1 if gimbal_yaw_rotate_enable else 0,
-            "wpml:gimbalYawRotateAngle": gimbal_yaw_rotate_angle,
+            "wpml:gimbalYawRotateAngle": gimbal_yaw_rotate_angle if gimbal_yaw_rotate_enable else None,
             "wpml:gimbalRotateTimeEnable": 1 if gimbal_rotate_time_enable else 0,
-            "wpml:gimbalRotateTime": gimbal_rotate_time
+            "wpml:gimbalRotateTime": gimbal_rotate_time if gimbal_rotate_time_enable else None
         })
 
     @classmethod
