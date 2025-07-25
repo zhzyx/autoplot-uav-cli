@@ -92,6 +92,10 @@ class GridPlotPlanner:
         direction = 1
         self.tasks = []
         for i in range(survey_points.shape[1]):
+            if i == 0:
+                line_init_hover_time = 5
+            else:
+                line_init_hover_time = 0
             locations = survey_points[:, i, :]
             if direction == 1:
                 locations = locations[::-1]
@@ -108,7 +112,8 @@ class GridPlotPlanner:
                                            gimbal_yaw_relative_mode='line',
                                            gimbal_yaw_angle=self.gimbal_yaw,
                                            non_stop=self.non_stop,
-                                           shutter_early_offset=self.shutter_early_offset))
+                                           shutter_early_offset=self.shutter_early_offset,
+                                           init_hover_time=line_init_hover_time))
             
 
     def create_kml(self):
