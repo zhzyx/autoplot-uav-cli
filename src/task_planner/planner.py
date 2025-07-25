@@ -118,7 +118,7 @@ class GridPlotPlanner:
         Returns:
             KML: The KML object containing the tasks.
         """
-        kml = KML(mission_config=self.mission_cfg)
+        kml = KML(mission_config=self.mission_cfg, global_height=self.height)
         placemarks = []
         for task in self.pre_tasks:
             # Create a new placemark for each task
@@ -141,7 +141,7 @@ class GridPlotPlanner:
             list of KML objects: The KML objects containing the tasks.
         """
         kml_list = []
-        kml = KML(mission_config=self.mission_cfg)
+        kml = KML(mission_config=self.mission_cfg, global_height=self.height)
         placemarks = []
         placemarks_index = 0
         for task in self.pre_tasks:
@@ -158,7 +158,7 @@ class GridPlotPlanner:
             if (i + 1) % num_tasks == 0:
                 kml.placemarks = placemarks
                 kml_list.append(kml)
-                kml = KML(mission_config=self.mission_cfg)
+                kml = KML(mission_config=self.mission_cfg, global_height=self.height)
                 placemarks_index = 0
                 placemarks = []
         for task in self.post_tasks:

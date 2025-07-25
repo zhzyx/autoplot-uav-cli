@@ -1,7 +1,7 @@
 import pandas as pd
 import pyproj
 geod = pyproj.Geod(ellps="WGS84")
-from dms2dec.dms_convert import dms2dec
+from .utils import dms2dec
 
 
 def dec2dms(dec: float) -> str:
