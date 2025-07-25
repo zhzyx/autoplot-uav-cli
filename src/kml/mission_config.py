@@ -165,7 +165,7 @@ class MissionConfig:
 
     @finish_action.setter
     def finish_action(self, value):
-        if value not in ["goHome", "gotoFirstWaypoint", "autoLand"]:
+        if value not in ["goHome", "gotoFirstWaypoint", "autoLand", "noAction"]:
             raise ValueError("finish_action must be 'goHome', 'gotoFirstWaypoint', or 'autoLand'.")
         self._finish_action = value
 
