@@ -3,18 +3,21 @@ import numpy as np
 from .utils import boundary_raw2mat, boundary_raw2mat_single_rc
 
 class PlotBoundary:
-    def __init__(self, csv_filepath, mode="raw2mat", row=None, col=None):
+    def __init__(self, csv_filepath, mode="raw2mat", row=None, col=None, downsample_factor=None):
         self.csv_filepath = csv_filepath
         self.mode = mode
         self.row = row
         self.col = col
+        self.downsample_factor = downsample_factor
         self.boundary_arr = None
         if mode == "raw2mat":
             if row is None or col is None:
                 raise ValueError("Row and column must be specified for raw2mat mode.")
+            if downsample_factor is not None:
+                raise NotImplementedError("Downsampling is not supported in raw2mat mode.")
             self.boundary_arr = boundary_raw2mat(csv_filepath, row, col)
         elif mode == "raw2mat_single_rc":
-            self.boundary_arr = boundary_raw2mat_single_rc(csv_filepath)
+            self.boundary_arr = boundary_raw2mat_single_rc(csv_filepath, downsample_factor)
         else:
             raise ValueError("Unsupported mode. Use 'raw2mat' or 'raw2mat_single_rc'.")
 

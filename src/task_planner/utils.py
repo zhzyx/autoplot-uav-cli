@@ -113,8 +113,11 @@ def boundary_raw2mat(csv_filepath, row, col):
     boundary_arr = np.array(points_list).reshape(row, col , 4, 2)
     return boundary_arr
 
-def boundary_raw2mat_single_rc(csv_filepath):
+def boundary_raw2mat_single_rc(csv_filepath, downsample_factor=None):
     df = pd.read_csv(csv_filepath)
+    if downsample_factor is not None:
+        from .grid_preprocessing import grid_downsample
+        df = grid_downsample(df, downsample_factor)
     df['LATITUDE'] = df['LATITUDE'].apply(dms2dec)
     df['LONGITUDE'] = df['LONGITUDE'].apply(dms2dec)
     horiz_pts = df[df['LABEL']=='HP'].sort_index().reset_index(drop=True)
