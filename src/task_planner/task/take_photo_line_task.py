@@ -17,7 +17,7 @@ class TakePhotoLineTask(BaseTask):
     5. move to the next waypoint, take photo non stop
     6. repeat till the final point
     '''
-    def __init__(self, locations, file_suffix, height, start_index=0, non_stop=False, speed=1, heading_angle=None, gimbal_yaw_relative_mode='line', gimbal_yaw_angle=0.0, gimbal_pitch_angle=-90, shutter_early_offset=0.):
+    def __init__(self, locations, file_suffix, height, start_index=0, non_stop=False, speed=1, heading_angle=None, gimbal_yaw_relative_mode='line', gimbal_yaw_angle=0.0, gimbal_pitch_angle=-90, shutter_early_offset=0., init_hover_time=0):
         '''
         parameters:
         locations: list of locations, each location is a tuple of (lat, lon)
@@ -45,6 +45,7 @@ class TakePhotoLineTask(BaseTask):
         self._use_global_speed = (speed is None)
         self._heading_angle = heading_angle
         self._shutter_early_offset = shutter_early_offset
+        self._init_hover_time = init_hover_time
         self._acutal_gimbal_yaw_angle = self.compute_acutal_gimbal_yaw_angle()
         if self._shutter_early_offset < 0:
             raise ValueError("shutter_early_offset must be non-negative")
@@ -112,8 +113,9 @@ class TakePhotoLineTask(BaseTask):
                                                gimbal_pitch_rotate_angle=self._gimbal_pitch_angle)
             first_placemark_actions.append(rotate_action)
         # for start of the line, hover for 1 seconds before taking photo
-        # hover_action = HoverAction(action_id=0, hover_time=1)
-        # first_placemark_actions.append(hover_action)
+        if self._init_hover_time > 0:
+            hover_action = HoverAction(action_id=0, hover_time=self._init_hover_time)
+            first_placemark_actions.append(hover_action)
         take_photo_action = TakePhotoAction(action_id=0,
                                             file_suffix=self._file_suffix[0])
         first_placemark_actions.append(take_photo_action)
