@@ -7,9 +7,15 @@ color_chart:
 plot:
   file_path: exp_plot_boundary/example.csv
   def_type: single_rc
+mission_cfg:
+  take_off_height: 25
+  transit_speed: 15
 suvery_cfg:
   suvery_height: 4
   gimbal_angle_relative_to_line: -90
   sample_size:
     r: 2
     c: 1
+  # uncomment the following line to enable plots downsampling
+  # i.e. one photo for every 3x2 grid
+  # downsample_factor: [3, 2] 
