@@ -8,7 +8,7 @@ import numpy as np
 class GridPlotPlanner:
     def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, 
                  non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0,
-                 mission_cfg=None):
+                 mission_cfg=None, camera="P1"):
         """
         Initialize the Planner with a PlotSurveyor instance and output file.
 
@@ -26,6 +26,7 @@ class GridPlotPlanner:
         self.pre_tasks = []
         self.post_tasks = []
         self.mission_cfg = mission_cfg
+        self.camera = camera
 
     def add_pre_task(self, task):
         """
@@ -114,7 +115,9 @@ class GridPlotPlanner:
                                            non_stop=self.non_stop,
                                            shutter_early_offset=self.shutter_early_offset,
                                            init_hover_time=line_init_hover_time))
-            
+    
+    def build_kml_obj(self):
+        return KML(mission_config=self.mission_cfg, global_height=self.height, payload=self.camera)
 
     def create_kml(self):
         """
@@ -123,7 +126,7 @@ class GridPlotPlanner:
         Returns:
             KML: The KML object containing the tasks.
         """
-        kml = KML(mission_config=self.mission_cfg, global_height=self.height)
+        kml = self.build_kml_obj()
         placemarks = []
         for task in self.pre_tasks:
             # Create a new placemark for each task
@@ -146,7 +149,7 @@ class GridPlotPlanner:
             list of KML objects: The KML objects containing the tasks.
         """
         kml_list = []
-        kml = KML(mission_config=self.mission_cfg, global_height=self.height)
+        kml = self.build_kml_obj()
         placemarks = []
         placemarks_index = 0
         for task in self.pre_tasks:
@@ -163,7 +166,7 @@ class GridPlotPlanner:
             if (i + 1) % num_tasks == 0:
                 kml.placemarks = placemarks
                 kml_list.append(kml)
-                kml = KML(mission_config=self.mission_cfg, global_height=self.height)
+                kml = self.build_kml_obj()
                 placemarks_index = 0
                 placemarks = []
         for task in self.post_tasks:
@@ -191,7 +194,7 @@ class GridPlotPlanner:
                 with open(os.path.join(folder_name, f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kml"), "w") as f:
                     f.write(kml.to_xml())
         else:
-            kml = self.create_kml()
+            kml = self.build_kml_obj()
             # Write to file
             with open(file_path, "w") as f:
                 f.write(kml.to_xml())
@@ -207,6 +210,6 @@ class GridPlotPlanner:
                 file_name = os.path.basename(file_path)
                 kml.to_kmz(os.path.join(folder_name,  f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kmz"))
         else:
-            kml = self.create_kml()
+            kml = self.build_kml_obj()
             # Write to file
             kml.to_kmz(file_path)

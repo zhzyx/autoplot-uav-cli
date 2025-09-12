@@ -6,6 +6,8 @@ from .waypoint_heading_param import WaypointHeadingParam
 from .mission_config import MissionConfig
 from .placemark import Placemark
 from enum import Enum
+from .payload import P1_PAYLOAD_INFO, AQ600PRO_PAYLOAD_INFO
+
 
 class WaypointTurnMode(str, Enum):
     COORDINATE_TURN = "coordinateTurn"
@@ -64,6 +66,7 @@ class KML:
                  global_waypoint_turn_mode="toPointAndPassWithContinuityCurvature",
                  gimbal_pitch_mode="manual",
                  global_height=5.0,
+                 payload="P1",
                  placemarks=None):
         current_datetime = datetime.now()
         if create_time is None:
@@ -99,6 +102,11 @@ class KML:
                 if not isinstance(placemark, Placemark):
                     raise TypeError("Each placemark must be an instance of the Placemark class.")
             self._placemarks = placemarks
+        self.payload = payload
+        if self.payload == "P1":
+            self.payload_info = deepcopy(P1_PAYLOAD_INFO)
+        elif self.payload == "AQ600Pro":
+            self.payload_info = deepcopy(AQ600PRO_PAYLOAD_INFO)
 
     @property
     def create_time(self):
@@ -155,6 +163,10 @@ class KML:
 
     
     def to_dict(self):
+        # TODO: refactor this hack by passing payload info to mission config
+        mcfg_dict = self.mission_config.to_dict()
+        mcfg_dict["wpml:payloadInfo"] = self.payload_info
+        
         data = {
             "kml": {
                 "@xmlns": "http://www.opengis.net/kml/2.2",
@@ -162,7 +174,7 @@ class KML:
                 "Document": {
                     "wpml:createTime": str(int(self.create_time.timestamp())),
                     "wpml:updateTime": str(int(self.update_time.timestamp())),
-                    "wpml:missionConfig": self.mission_config.to_dict(),
+                    "wpml:missionConfig": mcfg_dict,
                     "Folder": {
                         "wpml:templateType": "waypoint",
                         "wpml:templateId": 0,
@@ -184,7 +196,7 @@ class KML:
                             "wpml:dewarpingEnable": 0,
                             "wpml:returnMode": "singleReturnStrongest",
                             "wpml:samplingRate": 24000,
-                            "wpml:focusMode": "firstPoint",
+                            "wpml:focusMode": "firstPoint", 
                             "wpml:scanningMode": "nonRepetitive",
                             "wpml:modelColoringEnable": 0
                         },
