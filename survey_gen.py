@@ -34,7 +34,8 @@ def generate_kml_from_config(config):
             finish_action=finish_action
         )
     else:
-        mission_cfg = None
+        mission_cfg = MissionConfig(take_off_security_height=5, global_transitional_speed=5, finish_action='goHome')
+        downsample_factor = None
     plot_path = config['plot']['file_path']
     plot_mode = config['plot']['def_type']
     if plot_mode == "all":
@@ -52,7 +53,7 @@ def generate_kml_from_config(config):
     suvery_height = config['suvery_cfg']['suvery_height']
     gimbal_angle_relative_to_line = config['suvery_cfg'].get('gimbal_angle_relative_to_line', 0)
     line_per_mission = config['suvery_cfg'].get('line_per_mission', None)
-    camera = config['suvery_cfg'].get('camera', None)
+    camera = config['suvery_cfg'].get('camera', 'P1')
     # Initialize PlotBoundary
     # Initialize PlotBoundary
     # csv_filepath = 'tests/boundary_files/xinxiang_small_plot.csv'

@@ -210,6 +210,6 @@ class GridPlotPlanner:
                 file_name = os.path.basename(file_path)
                 kml.to_kmz(os.path.join(folder_name,  f"{'.'.join(file_name.split('.')[:-1])}-part-{i}.kmz"))
         else:
-            kml = self.build_kml_obj()
+            kml = self.create_kml() 
             # Write to file
             kml.to_kmz(file_path)
