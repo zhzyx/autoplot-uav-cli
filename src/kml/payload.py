@@ -1,5 +1,7 @@
 P1_PAYLOAD_INFO = {
     "wpml:payloadEnumValue": 50,
+    "wpml:payloadSubEnumValue": 0,
+    "wpml:payloadPositionIndex": 0,
 }
 
 AQ600PRO_PAYLOAD_INFO = {
