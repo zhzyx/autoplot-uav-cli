@@ -17,7 +17,7 @@ class TakePhotoLineTask(BaseTask):
     5. move to the next waypoint, take photo non stop
     6. repeat till the final point
     '''
-    def __init__(self, locations, file_suffix, height, start_index=0, non_stop=False, speed=1, heading_angle=None, gimbal_yaw_relative_mode='line', gimbal_yaw_angle=0.0, gimbal_pitch_angle=-90, shutter_early_offset=0., init_hover_time=0):
+    def __init__(self, locations, file_suffix, height, start_index=0, non_stop=False, speed=1, heading_angle=None, gimbal_yaw_relative_mode='line', gimbal_yaw_angle=0.0, gimbal_pitch_angle=-90, shutter_issue_lead_time_s=0., init_hover_time=0):
         '''
         parameters:
         locations: list of locations, each location is a tuple of (lat, lon)
@@ -44,7 +44,7 @@ class TakePhotoLineTask(BaseTask):
         self._speed = speed
         self._use_global_speed = (speed is None)
         self._heading_angle = heading_angle
-        self._shutter_early_offset = shutter_early_offset
+        self._shutter_early_offset = shutter_issue_lead_time_s
         self._init_hover_time = init_hover_time
         self._acutal_gimbal_yaw_angle = self.compute_acutal_gimbal_yaw_angle()
         if self._shutter_early_offset < 0:

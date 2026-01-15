@@ -1,13 +1,19 @@
 import os
+from warnings import warn
 from ..task_planner.plot_boundary import PlotBoundary
 from ..task_planner.plot_surveryor import PlotSurveyor
 from .task import TakePhotoLineTask
 from ..kml.kml import KML
 import numpy as np
 
+DEFAULT_SHUTTER_ISSUE_LEAD_TIME_S = {
+    "P1": 0.5,
+    "AQ600Pro": 2.4
+}
+
 class GridPlotPlanner:
     def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, 
-                 non_stop=True, shutter_early_offset=0.5, gimbal_yaw=0.0,
+                 non_stop=True, shutter_issue_lead_time_s=0.5, gimbal_yaw=0.0,
                  mission_cfg=None, camera="P1"):
         """
         Initialize the Planner with a PlotSurveyor instance and output file.
@@ -15,19 +21,24 @@ class GridPlotPlanner:
         Args:
             surveyor (PlotSurveyor): An instance of PlotSurveyor to provide survey points.
             output_file (str): Path to the output KML file.
-        """
+            shutter_issue_lead_time_s (float): Lead time in seconds to issue the shutter command before reaching the waypoint.
+        """ 
         self.surveyor = surveyor
         self.height = height
         self.speed = speed
         self.non_stop = non_stop
-        self.shutter_early_offset = shutter_early_offset
+        self.shutter_issue_lead_time_s = shutter_issue_lead_time_s
         self.gimbal_yaw = gimbal_yaw
         self.tasks = []
         self.pre_tasks = []
         self.post_tasks = []
         self.mission_cfg = mission_cfg
         self.camera = camera
-
+        if self.camera in DEFAULT_SHUTTER_ISSUE_LEAD_TIME_S:
+            self.shutter_issue_lead_time_s = DEFAULT_SHUTTER_ISSUE_LEAD_TIME_S[self.camera]
+        else:
+            warn(f"Camera '{camera}' not found in DEFAULT_SHUTTER_ISSUE_LEAD_TIME_S. Using default value: {self.shutter_issue_lead_time_s} s")
+        print(f"Using shutter issue lead time: {self.shutter_issue_lead_time_s} s for camera '{self.camera}'")
     def add_pre_task(self, task):
         """
         Add a pre-task to the planner.
@@ -113,7 +124,7 @@ class GridPlotPlanner:
                                            gimbal_yaw_relative_mode='line',
                                            gimbal_yaw_angle=self.gimbal_yaw,
                                            non_stop=self.non_stop,
-                                           shutter_early_offset=self.shutter_early_offset,
+                                           shutter_issue_lead_time_s=self.shutter_issue_lead_time_s,
                                            init_hover_time=line_init_hover_time))
     
     def build_kml_obj(self):
