@@ -62,12 +62,6 @@ def boundary2waypoint(boundary, n_pts=(1, 1)):
             row_points.append(point)
         grid_points.append(row_points)
     # OPTIMIZE: use gridmesh to generate the grid points
-
-
-        
-
-
-
     # for i in range(y_pts):
     #     row_points = []
     #     top_interp = boundary[0] + top_vector * (i + 1) / (y_pts + 1)
@@ -118,8 +112,10 @@ def boundary_raw2mat_single_rc(csv_filepath, downsample_factor=None):
     if downsample_factor is not None:
         from .grid_preprocessing import grid_downsample
         df = grid_downsample(df, downsample_factor)
-    df['LATITUDE'] = df['LATITUDE'].apply(dms2dec)
-    df['LONGITUDE'] = df['LONGITUDE'].apply(dms2dec)
+    if df['LATITUDE'].dtype == object:
+        df['LATITUDE'] = df['LATITUDE'].apply(dms2dec)
+    if df['LONGITUDE'].dtype == object:
+        df['LONGITUDE'] = df['LONGITUDE'].apply(dms2dec)
     horiz_pts = df[df['LABEL']=='HP'].sort_index().reset_index(drop=True)
     verti_pts = df[df['LABEL']=='VP'].sort_index().reset_index(drop=True)
     horiz_list = [horiz_pts.copy()]
