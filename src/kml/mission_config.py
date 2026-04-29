@@ -135,6 +135,18 @@ def create_M300_drone_info():
     """
     return DroneInfo(60, 0)
 
+def create_M350_drone_info():
+    """
+    Create a M350 DroneInfo object with default values.
+    """
+    return DroneInfo(89, 0)
+
+def create_M400_drone_info():
+    """
+    Create a M400 DroneInfo object with default values.
+    """
+    return DroneInfo(103, 0)
+
 class MissionConfig:
     def __init__(self, fly_to_wayline_mode="safely", finish_action="goHome", exit_on_rc_lost="executeLostAction",
                  execute_rc_lost_action="goBack", take_off_security_height=5, take_off_ref_point=None,
