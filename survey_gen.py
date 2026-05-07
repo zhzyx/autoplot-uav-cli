@@ -4,7 +4,7 @@ from src.task_planner.planner import GridPlotPlanner
 import numpy as np
 import matplotlib.pyplot as plt
 import os, yaml
-from src.kml.mission_config import MissionConfig
+from src.kml.mission_config import MissionConfig, create_M300_drone_info, create_M350_drone_info, create_M400_drone_info
 from argparse import ArgumentParser
 
 # arg parser
@@ -95,8 +95,14 @@ def generate_kml_from_config(config):
 
     # planner.save_to_kml(f'./output/{mission_name}.kml', split=(line_per_mission is not None), num_tasks=line_per_mission)
     planner.save_to_kmz(f'./output/{mission_name}.kmz', split=(line_per_mission is not None), num_tasks=line_per_mission)
-    len(planner.tasks[0].placemarks)
-    # Visualize Boundaries with Shapely and Survey Points
+    # save the coordinates of the placemarks to csv 
+    kml = planner.create_kml()
+    kml.mission_config.to_dict()
+    coords = [p.coordinates for p in kml.placemarks]
+    import pandas as pd
+    df = pd.DataFrame(coords, columns=['latitude', 'longitude'])
+    df.to_csv(f"./report/{config['mission_name']}_coords.csv", index=True)
+
     # Visualize Boundaries with Shapely and Survey Points
     from shapely.geometry import Polygon
     fig, ax = plt.subplots(figsize=(10, 20))
@@ -113,10 +119,16 @@ def generate_kml_from_config(config):
                 color = 'red'
             ax.plot(y, x, c=color)
             p = ax.fill(y, x, alpha=0.5, color=color)
-            # Overlay the survey points
-            scatter = ax.scatter(survey_grid[:, :, 1].ravel(), survey_grid[:, :, 0].ravel(), c='blue', marker='o', s=2)
-    ax.set_aspect('equal', adjustable='box')
-    # plt.title('Boundaries with Survey Points (Shapely)')
+    # Plot survey points with using coords from kml
+    scatter = ax.scatter(df['longitude'], df['latitude'], c='blue', marker='x', label='Survey Points')
+    for i in range(len(df) - 2): 
+        x1, y1 = df.iloc[i]['longitude'], df.iloc[i]['latitude']
+        x2, y2 = df.iloc[i+1]['longitude'], df.iloc[i+1]['latitude']
+        mid_x, mid_y = (x1 + x2) / 2, (y1 + y2) / 2
+        dx, dy = (x2 - x1) * 0.1, (y2 - y1) * 0.1
+        ax.annotate('', xy=(mid_x + dx, mid_y + dy), xytext=(mid_x - dx, mid_y - dy),
+                    arrowprops=dict(arrowstyle='->', color='blue', lw=1.5, alpha=0.7))
+        ax.plot([x1, x2], [y1, y2], 'b-', lw=1.5, alpha=0.7)
 
     plt.title('Plot Boundaries with Survey Points')
     plt.xlabel('Longitude')
@@ -126,12 +138,6 @@ def generate_kml_from_config(config):
     plt.legend([p[0], scatter], ['Plot', 'Survey Points'], loc='upper right')
     os.makedirs('./report', exist_ok=True)
     plt.savefig(f'./report/{mission_name}_boundaries_with_survey_points.png', dpi=300, bbox_inches='tight')
-    kml = planner.build_kml_obj()
-    kml.mission_config.to_dict()
-    coords = [p.coordinates for p in kml.placemarks]
-    import pandas as pd
-    df = pd.DataFrame(coords, columns=['latitude', 'longitude'])
-    df.to_csv(f"./report/{config['mission_name']}_coords.csv", index=True)
 
 
 if __name__ == "__main__":
