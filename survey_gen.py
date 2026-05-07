@@ -28,12 +28,26 @@ def generate_kml_from_config(config):
         transit_speed = config['mission_cfg'].get('transit_speed', 5)  # Default to 15 if not specified
         finish_action = config['mission_cfg'].get('finish_action', 'goHome')  # Default to 'noAction' if not specified
         downsample_factor = config['suvery_cfg'].get('downsample_factor', None)  # Default to None if not specified
+        drone_model = config['mission_cfg'].get('drone_model', 'M300')  # Default to 'M300' if not specified
+        print(f"Mission Config - Take-off Height: {take_off_height}, Transit Speed: {transit_speed}, Finish Action: {finish_action}, Drone Model: {drone_model}, Gimbal Pitch: {gimbal_pitch}")
+        gimbal_angle_relative_to_line = config['suvery_cfg'].get('gimbal_angle_relative_to_line', 0)  # Default to 0 if not specified
+        print(f"Mission Config - Take-off Height: {take_off_height}, Transit Speed: {transit_speed}, Finish Action: {finish_action}, Drone Model: {drone_model}")
+        if drone_model == 'M300':
+            drone_info = create_M300_drone_info()
+        if drone_model == 'M350':
+            drone_info = create_M350_drone_info()
+        elif drone_model == 'M400':
+            drone_info = create_M400_drone_info()
+        else:
+            raise ValueError(f"Unsupported drone model: {drone_model}")
         mission_cfg = MissionConfig(
             take_off_security_height= take_off_height,
             global_transitional_speed= transit_speed,
-            finish_action=finish_action
+            finish_action=finish_action,
+            drone_info=drone_info
         )
     else:
+        gimbal_angle_relative_to_line = 0
         mission_cfg = MissionConfig(take_off_security_height=5, global_transitional_speed=5, finish_action='goHome')
         downsample_factor = None
     plot_path = config['plot']['file_path']
@@ -51,6 +65,7 @@ def generate_kml_from_config(config):
     suvery_r = config['suvery_cfg']['sample_size']['r']
     suvery_c = config['suvery_cfg']['sample_size']['c']
     suvery_height = config['suvery_cfg']['suvery_height']
+    gimbal_pitch = config['suvery_cfg'].get('gimbal_pitch', -90)  # Default to -90 if not specified/
     gimbal_angle_relative_to_line = config['suvery_cfg'].get('gimbal_angle_relative_to_line', 0)
     line_per_mission = config['suvery_cfg'].get('line_per_mission', None)
     camera = config['suvery_cfg'].get('camera', 'P1')
@@ -72,7 +87,7 @@ def generate_kml_from_config(config):
     reload(kml_module)
     reload(planner_module)
 
-    planner = GridPlotPlanner(surveyor, height=suvery_height, gimbal_yaw=gimbal_angle_relative_to_line, mission_cfg=mission_cfg, camera=camera)
+    planner = GridPlotPlanner(surveyor, height=suvery_height, gimbal_yaw=gimbal_angle_relative_to_line, gimbal_pitch=gimbal_pitch, mission_cfg=mission_cfg, camera=camera)
     planner.plan_task()#start_point='tl')
     if color_chart_coord is not None:
         calib_board_action = TakePhotoTask((color_chart_coord[0], color_chart_coord[1]), 'colorchart', color_chart_coord[2], gimbal_pitch_angle= -90, gimbal_yaw_angle=0)
