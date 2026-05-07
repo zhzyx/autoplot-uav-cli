@@ -197,3 +197,11 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# macOS
+.DS_Store
+
+mission_cfg/**
+exp_plot_boundary/**
+output/**
+report/**/
