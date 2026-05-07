@@ -19,8 +19,7 @@ DEFAULT_SHUTTER_ISSUE_LEAD_TIME_S = {
 
 class GridPlotPlanner:
     def __init__(self, surveyor: PlotSurveyor, height: float = 10.0, speed: float = 1.0, 
-                 non_stop=True, shutter_issue_lead_time_s=0.5, gimbal_yaw=0.0,
-                 non_stop=True, shutter_issue_lead_time_s=0.5, gimbal_yaw=0.0,
+                 non_stop=True, shutter_issue_lead_time_s=0.5, gimbal_yaw=0.0, gimbal_pitch=-90.0,
                  mission_cfg=None, camera="P1"):
         """
         Initialize the Planner with a PlotSurveyor instance and output file.
@@ -29,8 +28,8 @@ class GridPlotPlanner:
             surveyor (PlotSurveyor): An instance of PlotSurveyor to provide survey points.
             output_file (str): Path to the output KML file.
             shutter_issue_lead_time_s (float): Lead time in seconds to issue the shutter command before reaching the waypoint.
-        """ 
-            shutter_issue_lead_time_s (float): Lead time in seconds to issue the shutter command before reaching the waypoint.
+            gimbal_yaw (float): The yaw angle of the gimbal.
+            gimbal_pitch (float): The pitch angle of the gimbal.
         """ 
         self.surveyor = surveyor
         self.height = height
@@ -39,6 +38,7 @@ class GridPlotPlanner:
         self.shutter_issue_lead_time_s = shutter_issue_lead_time_s
         self.shutter_issue_lead_time_s = shutter_issue_lead_time_s
         self.gimbal_yaw = gimbal_yaw
+        self.gimbal_pitch = gimbal_pitch
         self.tasks = []
         self.pre_tasks = []
         self.post_tasks = []
@@ -135,7 +135,7 @@ class GridPlotPlanner:
                                            gimbal_yaw_angle=self.gimbal_yaw,
                                            non_stop=self.non_stop,
                                            shutter_issue_lead_time_s=self.shutter_issue_lead_time_s,
-                                           shutter_issue_lead_time_s=self.shutter_issue_lead_time_s,
+                                           gimbal_pitch_angle=self.gimbal_pitch,
                                            init_hover_time=line_init_hover_time))
     
     def build_kml_obj(self):

@@ -5,6 +5,7 @@ from ...kml.action import TakePhotoAction, GimbalRotateAction, HoverAction, Rota
 from ...kml.waypoint_turn_param import WaypointTurnParam
 from ...kml.waypoint_heading_param import WaypointHeadingParam
 import pyproj # pyproj use longitude, latitude order default
+import numpy as np
 
 class TakePhotoLineTask(BaseTask):
     '''
@@ -47,6 +48,11 @@ class TakePhotoLineTask(BaseTask):
         self._shutter_early_offset = shutter_issue_lead_time_s
         self._init_hover_time = init_hover_time
         self._acutal_gimbal_yaw_angle = self.compute_acutal_gimbal_yaw_angle()
+        if self._gimbal_pitch_angle is None or not (-90 <= self._gimbal_pitch_angle <= 0):
+            raise ValueError("gimbal_pitch_angle must be between -90 and 0 degrees")
+        # TODO if gimbal pitch angle is not -90, we need to make sure the yaw follow the line direction, otherwise the photo may not be taken at the right position/
+        if self._gimbal_pitch_angle != -90 and (self._gimbal_yaw_relative_mode != 'line' or self._gimbal_yaw_angle != 0):
+            raise ValueError("If gimbal_pitch_angle is not -90, the gimbal_yaw_relative_mode must be 'line' and gimbal_yaw_angle must be 0, otherwise the photo may not be taken at the right position")
         if self._shutter_early_offset < 0:
             raise ValueError("shutter_early_offset must be non-negative")
         if len(locations) < 2:
@@ -120,8 +126,16 @@ class TakePhotoLineTask(BaseTask):
                                             file_suffix=self._file_suffix[0])
         first_placemark_actions.append(take_photo_action)
         action_group = ActionGroup(group_id=self._start_index, actions=first_placemark_actions)
+        loc = self._locations[0]
+        if self._gimbal_pitch_angle is not None and self._gimbal_pitch_angle != -90:
+            # offset the location to make sure the photo is taken at the right position, since the gimbal is not pointing down, the photo may be taken in front of the drone
+            offset_distance = self._height * abs(np.tan(np.radians(self._gimbal_pitch_angle)))
+            geod = pyproj.Geod(ellps='WGS84')
+            offset_az = (self._heading_angle + 180) % 360
+            lon, lat, _ = geod.fwd(loc[1], loc[0], offset_az, offset_distance)
+            loc = (lat, lon)
         first_placemark = Placemark(
-            coordinates=self._locations[0],
+            coordinates=loc,
             index=self._start_index, 
             ellipsoid_height=self._height, 
             height=self._height,
@@ -155,6 +169,13 @@ class TakePhotoLineTask(BaseTask):
                     raise ValueError(f"shutter_early_offset is too large, the distance between the two waypoints ({offset_max_dist}) is too small compare to the offset distance ({offset_distance})")
                 lon, lat, _ = geod.fwd(loc[1], loc[0], offset_az, offset_distance)
                 loc = (lat, lon)
+            if self._gimbal_pitch_angle is not None and self._gimbal_pitch_angle != -90:
+                # offset the location to make sure the photo is taken at the right position, since the gimbal is not pointing down, the photo may be taken in front of the drone
+                offset_distance = self._height * abs(np.tan(np.radians(self._gimbal_pitch_angle))) 
+                geod = pyproj.Geod(ellps='WGS84')
+                offset_az = (self._heading_angle + 180) % 360
+                lon, lat, _ = geod.fwd(loc[1], loc[0], offset_az, offset_distance)
+                loc = (lat, lon)
             placemark = Placemark(
                 coordinates=loc,
                 index=self._start_index + i, 
@@ -177,8 +198,15 @@ class TakePhotoLineTask(BaseTask):
         final_take_photo_action = TakePhotoAction(action_id=0, 
                                                   file_suffix=self._file_suffix[-1])
         final_action_group = ActionGroup(group_id=final_id, actions=[final_take_photo_action])
+        loc = self._locations[-1]
+        if self._gimbal_pitch_angle is not None and self._gimbal_pitch_angle != -90:
+            offset_distance = self._height * abs(np.tan(np.radians(self._gimbal_pitch_angle))) # in meter
+            geod = pyproj.Geod(ellps='WGS84')
+            offset_az = (self._heading_angle + 180) % 360
+            lon, lat, _ = geod.fwd(loc[1], loc[0], offset_az, offset_distance)
+            loc = (lat, lon)
         placemark = Placemark(
-            coordinates=self._locations[-1],
+            coordinates=loc,
             index=final_id, 
             ellipsoid_height=self._height, 
             height=self._height,
