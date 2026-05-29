@@ -29,7 +29,6 @@ def generate_kml_from_config(config):
         finish_action = config['mission_cfg'].get('finish_action', 'goHome')  # Default to 'noAction' if not specified
         downsample_factor = config['suvery_cfg'].get('downsample_factor', None)  # Default to None if not specified
         drone_model = config['mission_cfg'].get('drone_model', 'M300')  # Default to 'M300' if not specified
-        print(f"Mission Config - Take-off Height: {take_off_height}, Transit Speed: {transit_speed}, Finish Action: {finish_action}, Drone Model: {drone_model}, Gimbal Pitch: {gimbal_pitch}")
         gimbal_angle_relative_to_line = config['suvery_cfg'].get('gimbal_angle_relative_to_line', 0)  # Default to 0 if not specified
         print(f"Mission Config - Take-off Height: {take_off_height}, Transit Speed: {transit_speed}, Finish Action: {finish_action}, Drone Model: {drone_model}")
         if drone_model == 'M300':
