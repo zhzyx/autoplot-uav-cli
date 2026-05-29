@@ -1,4 +1,4 @@
-# autoplot-uav-cli
+# Autoplot UAV
 
 [中文](README.zh.md)
 

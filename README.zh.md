@@ -1,4 +1,4 @@
-# autoplot-uav-cli
+# Autoplot UAV
 
 大疆无人机 KML 航线规划工具，根据地块边界和作业配置生成 KMZ 航点任务文件。
 
