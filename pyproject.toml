@@ -1,0 +1,36 @@
+[project]
+name = "autoplot-uav-cli"
+version = "0.1.0"
+description = "KML mission planner for DJI drones"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "pyproj>=3.6",
+    "shapely>=2.0",
+    "xmltodict>=0.13",
+    "matplotlib>=3.7",
+    "pyyaml>=6.0",
+    "djikmz",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ipykernel>=6.0",
+    "jupyterlab>=4.0",
+]
+
+[project.scripts]
+survey = "survey_gen:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+include = ["survey_gen.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

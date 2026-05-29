@@ -140,6 +140,9 @@ def generate_kml_from_config(config):
     plt.savefig(f'./report/{mission_name}_boundaries_with_survey_points.png', dpi=300, bbox_inches='tight')
 
 
-if __name__ == "__main__":
+def main():
     config_file = parse_args().config
     generate_kml_from_config(config_file)
+
+if __name__ == "__main__":
+    main()
