@@ -33,7 +33,7 @@ def generate_kml_from_config(config):
         print(f"Mission Config - Take-off Height: {take_off_height}, Transit Speed: {transit_speed}, Finish Action: {finish_action}, Drone Model: {drone_model}")
         if drone_model == 'M300':
             drone_info = create_M300_drone_info()
-        if drone_model == 'M350':
+        elif drone_model == 'M350':
             drone_info = create_M350_drone_info()
         elif drone_model == 'M400':
             drone_info = create_M400_drone_info()
