@@ -10,8 +10,14 @@ KML mission planner for DJI drones. Generates KMZ waypoint mission files from pl
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/):
 
+**Linux / macOS**
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows (PowerShell)**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 ### Install
@@ -36,9 +42,16 @@ uv run survey --config mission_cfg/your_config.yaml
 
 Or activate the virtual environment first:
 
+**Linux / macOS**
 ```bash
 source .venv/bin/activate
-python survey_gen.py
+python survey_gen.py --config mission_cfg/your_config.yaml
+```
+
+**Windows (PowerShell)**
+```powershell
+.venv\Scripts\activate
+python survey_gen.py --config mission_cfg/your_config.yaml
 ```
 
 ### Tests

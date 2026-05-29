@@ -8,8 +8,14 @@
 
 安装 [uv](https://docs.astral.sh/uv/getting-started/installation/)：
 
+**Linux / macOS**
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**Windows（PowerShell）**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
 ### 获取代码并安装依赖
@@ -34,8 +40,15 @@ uv run survey --config mission_cfg/your_config.yaml
 
 或激活虚拟环境后直接运行：
 
+**Linux / macOS**
 ```bash
 source .venv/bin/activate
+python survey_gen.py --config mission_cfg/your_config.yaml
+```
+
+**Windows（PowerShell）**
+```powershell
+.venv\Scripts\activate
 python survey_gen.py --config mission_cfg/your_config.yaml
 ```
 
